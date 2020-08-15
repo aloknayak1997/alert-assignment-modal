@@ -1,0 +1,187 @@
+<!doctype html>
+<html ng-app='myApp'>
+
+<head>
+    <title>Sort the table on header click using AngularJS</title>
+    <link href="style.css" rel='stylesheet' type='text/css'>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular.min.js" type='text/javascript'></script>
+    <script src='app.js' type='text/javascript'></script>
+</head>
+
+<body ng-controller="myController">
+    <div class="app">
+        <button id="open-modal" ng-click="openModal()">
+            Open Modal
+        </button>
+        <br />
+        <div>
+            Click to open modal
+        </div>
+        <div class="background" ng-if="modalActive" ng-click="closeModal()">
+
+        </div>
+        <div id="modal" ng-if="modalActive">
+            <div class="head">
+                <div>
+                    Alerts
+                </div>
+                <div ng-click="closeModal()" class="close">
+                    <svg style="width: 20px;" aria-hidden="true" focusable="false" data-prefix="far" data-icon="times-circle" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="svg-inline--fa fa-times-circle fa-w-16 fa-3x"><path fill="currentColor" d="M256 8C119 8 8 119 8 256s111 248 248 248 248-111 248-248S393 8 256 8zm0 448c-110.5 0-200-89.5-200-200S145.5 56 256 56s200 89.5 200 200-89.5 200-200 200zm101.8-262.2L295.6 256l62.2 62.2c4.7 4.7 4.7 12.3 0 17l-22.6 22.6c-4.7 4.7-12.3 4.7-17 0L256 295.6l-62.2 62.2c-4.7 4.7-12.3 4.7-17 0l-22.6-22.6c-4.7-4.7-4.7-12.3 0-17l62.2-62.2-62.2-62.2c-4.7-4.7-4.7-12.3 0-17l22.6-22.6c4.7-4.7 12.3-4.7 17 0l62.2 62.2 62.2-62.2c4.7-4.7 12.3-4.7 17 0l22.6 22.6c4.7 4.7 4.7 12.3 0 17z" class=""></path></svg>
+                </div>
+            </div>
+            <div class="body">
+                <div class="tab-hld">
+                    <div class="tab-head-hld">
+                        <div class="tab-head">
+                            <div ng-repeat="tab in tabs" ng-class="{'tab':true,'prevTab':(tabActive.tab == tab.tab + 1),'active':tabActive.tab == tab.tab}" ng-click="switchTab(tab)">
+                                {{tab.name}}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-body">
+                        <div ng-if="tabActive.tab == 5" class="tab-content">
+                            <div>
+                                <div class="tab-content-head">
+                                    <div class="tab-name">
+                                        {{tabActive.name}}
+                                    </div>
+                                    <div>
+                                        <div class="inp-hld">
+                                            <div>Find</div>
+                                            <div class="input">
+                                                <input type="text" ng-model="search">
+                                            </div>
+                                        </div>
+                                        <div class="btns">
+                                            <button ng-click="delete()">
+                                                Delete
+                                            </button>
+                                            <button>
+                                                New
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="table-cont">
+                                    <table>
+                                        <tr>
+                                            <th>
+                                                <input type="checkbox" name="select-all" id="select-all" ng-model="is_checked_all" ng-change="check_all(is_checked_all)">
+                                            </th>
+                                            <th ng-click='sortColumn("name")' ng-class='sortClass("name")'>Name</th>
+                                            <th ng-click='sortColumn("description")' ng-class='sortClass("description")'>Description</th>
+                                            <th ng-click='sortColumn("web_refrence")' ng-class='sortClass("web_refrence")'>Web Refrence</th>
+                                        </tr>
+                                        <tr ng-repeat='data in FileData | filter:search | orderBy:column:reverse' ng-if="data.is_active || data.is_active == undefined">
+                                            <td width='5%' align='center'>
+                                                <input type="checkbox" name="{{data.name}}" ng-model="data.is_checked">
+                                            </td>
+                                            <td width='10%' align='center'>{{data.name}}</td>
+                                            <td width='20%' align='center' class="desc">
+                                                <div>
+                                                    {{data.description}}
+                                                </div>
+                                            </td>
+                                            <td width='10%' align='center'>{{data.web_refrence}}</td>
+                                        </tr>
+                                        <tr ng-if='(FileData | filter:search).length == 0'>
+                                            <td width='100%' align='center' colspan="4">No Results found </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                                <div class="table-foot">
+                                    <div>
+                                        Total Results : {{FileData.length}}
+                                    </div>
+                                    <div class="pages" ng-if="(FileData.length / 10) > 1">
+                                        <div>
+                                            Page
+                                        </div>
+                                        <div>
+                                            <input type="text" class="page" disabled ng-model="pageactive"> of {{FileData.length / 10}}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="input-grid">
+                                    <div>
+                                        Name
+                                    </div>
+                                    <div>
+                                        <input type="text" ng-model="newData.name">
+                                        <button>Sel</button>
+                                    </div>
+                                </div>
+                                <div class="input-grid">
+                                    <div>
+                                        Description
+                                    </div>
+                                    <div>
+                                        <textarea name="description" id="" cols="30" rows="3" ng-model="newData.description"></textarea>
+                                    </div>
+                                </div>
+                                <div class="input-grid">
+                                    <div>
+                                        Order Set
+                                    </div>
+                                    <div class="order">
+                                        <input type="text" ng-model="newData.web_refrence">
+                                        <button>
+                                            <div class="sq"></div>
+                                            <div class="sq"></div>
+                                            <div class="sq"></div>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="input-grid">
+                                    <div>
+
+                                    </div>
+                                    <div class="check">
+                                        <input type="checkbox" />
+                                        <span>Apply Alerts to all the Medications in the same class</span>
+                                    </div>
+                                </div>
+                                <div class="flex-end">
+                                    <button ng-click="add_new()">
+                                        New
+                                    </button>
+                                </div>
+                                <div class="table-cont dummy" ng-if="FileDataNew.length > 0">
+                                    <table>
+                                        <tr>
+                                            <th ng-click='sortColumn("name")' ng-class='sortClass("name")'>Name</th>
+                                            <!-- <th ng-click='sortColumn("description")' ng-class='sortClass("description")'>Description</th> -->
+                                            <th ng-click='sortColumn("web_refrence")' ng-class='sortClass("web_refrence")'>Web Refrence</th>
+                                        </tr>
+                                        <tr ng-repeat='data in FileDataNew | orderBy:column:reverse'>
+                                            <td align='center'>{{data.name}}</td>
+                                            <!-- <td align='center'>{{data.description}}</td> -->
+                                            <td align='center'>{{data.web_refrence}}</td>
+                                        </tr>
+                                    </table>
+                                </div>
+                                <div class="flex-end btm">
+                                    <button>
+                                        Cancel
+                                    </button>
+                                    <button class="save" ng-click="add_main()">
+                                        Ok
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+
+
+</body>
+
+</html>
